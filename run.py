@@ -65,21 +65,16 @@ def delete_ingredient_from_db(ingredient_name_like):
     finally:
         conn.close()
 
-api_key = os.environ.get("GOOGLE_API_KEY")
-gemini_configured_successfully = False
 
-if api_key:
+
+
     try:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel('gemini-1.5-flash')
         gemini_configured_successfully = True
     except Exception as e:
         st.error(f"Gemini APIの設定中にエラーが発生しました: {e}")
-else:
-    st.error("APIキーが環境変数 GOOGLE_API_KEY に設定されていません。")
-    st.info("ローカルで実行する場合: 環境変数に GOOGLE_API_KEY を設定してください。")
-    st.info("Streamlit Cloudにデプロイする場合: アプリ設定のSecretsに GOOGLE_API_KEY = \"あなたのAPIキー\" を追加してください。")
-    model = None # モデルが利用できないことを示す
+
 
 
 # # --- データベースの初期化ボタン ---
@@ -150,6 +145,22 @@ def run_app():
         st.info("データベースに食材がありません。")
 
     # --- 献立提案セクション ---
+    # Google Gemini APIの設定
+    api_key = os.environ.get("GOOGLE_API_KEY")
+    gemini_configured_successfully = False
+    if api_key:
+        try:
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            gemini_configured_successfully = True
+        except Exception as e:
+            st.error(f"Gemini APIの設定中にエラーが発生しました: {e}")
+    else:
+        st.error("APIキーが環境変数 GOOGLE_API_KEY に設定されていません。")
+        st.info("ローカルで実行する場合: 環境変数に GOOGLE_API_KEY を設定してください。")
+        st.info("Streamlit Cloudにデプロイする場合: アプリ設定のSecretsに GOOGLE_API_KEY = \"あなたのAPIキー\" を追加してください。")
+        model = None # モデルが利用できないことを示す
+
     st.header("献立提案")
     col_menu_input, col_menu_output = st.columns(2)
 
