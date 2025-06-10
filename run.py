@@ -146,7 +146,8 @@ def run_app():
 
     # --- 献立提案セクション ---
     # Google Gemini APIの設定
-    api_key = os.environ.get("GOOGLE_API_KEY")
+    api_key = st.secrets["GOOGLE_API_KEY"]
+    # api_key = os.environ.get("GOOGLE_API_KEY")
     gemini_configured_successfully = False
     if api_key:
         try:
